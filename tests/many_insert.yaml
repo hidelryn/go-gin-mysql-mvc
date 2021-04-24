@@ -1,0 +1,24 @@
+config:
+  target: "http://localhost:3000/v1" # host
+  phases:
+    - duration: 60 # 해당 초만큼 실행
+      arrivalRate: 30 # 가상 사용자 수
+  processor: "./util.js" # 참조할 js
+  defaults:
+    headers: # header 세팅
+      Content-Type: 'application/json'
+scenarios:
+  - flow:
+    - function: "setParam"
+    - post:
+        url: "/join"
+        json: 
+          nickname: "{{ payload }}"
+        match:
+          json: "$.code"
+          value: 200
+    - get:
+        url: "/users"
+        match:
+          json: "$.code"
+          value: 200
